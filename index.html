@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic YouTube Embed Code Generator</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #inputForm {
+            margin-bottom: 20px;
+        }
+        #inputForm input, #inputForm button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #codeModal {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            z-index: 2;
+Width:75%;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+    </style>
+<style>
+  
+
+  /* Input Form Styles */
+  #inputForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    border-radius: 4px;
+    max-width: 400px;
+    margin: auto;
+  }
+
+  #inputForm input, #inputForm button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  #inputForm button {
+    
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  #inputForm button:disabled {
+    
+    cursor: not-allowed;
+  }
+
+  
+
+  #codeModal textarea {
+    width: 100%;
+    padding: 0px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none; /* Optional: Prevent resizing */
+  }
+
+  #codeModal button {
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+Margin:5px;
+  }
+
+  #codeModal button:nth-child(2) {
+    background-color: #4caf50;
+  }
+
+  #codeModal button:nth-child(3) {
+    background-color: #f44336;
+  }
+</style>
+
+</head>
+<body>
+
+<div id="inputForm">
+    apiKey<input type="text" id="apiKey" placeholder="API Key">
+    channelId<input type="text" id="channelId" placeholder="Channel ID">
+    Number of videos<input type="number" id="maxResults" placeholder="Number of videos" min="1">
+    background color<input type="color" id="bgColor" placeholder="Background Color">
+    text Color<input type="color" id="textColor" placeholder="Text Color">
+    <button id="generateCode" disabled>Get the Code</button>
+</div>
+
+<div id="codeModal">
+    <textarea id="generatedCode" rows="10" cols="50"></textarea>
+    <button onclick="copyCode()">Copy Code</button>
+    <button onclick="closeModal()">Close</button>
+</div>
+<div id="overlay"></div>
+
+<script>
+    // JavaScript logic as provided in the next section
+document.querySelectorAll('#inputForm input').forEach(input => {
+    input.addEventListener('input', () => {
+        const allFilled = Array.from(document.querySelectorAll('#inputForm input')).every(input => input.value.trim() !== '');
+        console.log('All filled:', allFilled); // Debugging line to check if allFilled becomes true
+        document.getElementById('generateCode').disabled = !allFilled;
+    });
+});
+
+        
+
+document.getElementById('generateCode').addEventListener('click', function() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const channelId = document.getElementById('channelId').value.trim();
+    const maxResults = document.getElementById('maxResults').value.trim();
+    const bgColor = document.getElementById('bgColor').value.trim();
+    const textColor = document.getElementById('textColor').value.trim();
+
+    const codeString = generateCodeString(apiKey, channelId, maxResults, bgColor, textColor);
+    document.getElementById('generatedCode').value = codeString;
+    showModal();
+});
+
+
+
+
+function generateCodeString(apiKey, channelId, maxResults, bgColor, textColor) {
+    return `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/13.0.0/material-components-web.min.css">
+        <style>
+            .video-container {
+                font-family: 'Cairo', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: ${bgColor}; /* User selected background color */
+                color: ${textColor}; /* User selected text color */
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .videos {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 20px;
+                justify-content: flex-start;
+                overflow-x: auto; /* Ensure horizontal scrolling */
+                width: 100%; /* Ensure it takes full width */
+            }
+            .video {
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                width: 320px; /* Set width */
+                flex-shrink: 0; /* Prevent shrinking */
+                flex-direction: column;
+                overflow: hidden;
+            }
+            .video iframe {
+                width: 100%;
+                height: 180px;
+            }
+            .video-info {
+                padding: 15px;
+                flex: 1;
+            }
+            .video-title, .video-description {
+                margin: 0;
+            }
+            .video-title {
+                font-size: 1.1em;
+                color: #333;
+                margin-bottom: 10px;
+            }
+            .video-description {
+                font-size: 0.9em;
+                color: #666;
+            }
+            .subscribe-container {
+                display: flex;
+                align-items: center; /* Center children vertically */
+                justify-content: center; /* Center children horizontally, if needed */
+                text-align: center;
+                width: auto;
+                max-width: 320px;
+                margin: auto;
+                background-color: white;
+                border-radius: 25px;
+                border: 1px solid red;
+                height: 30px; /* Adjust based on your preference for the container's height */
+                padding: 10px;
+            }
+            .subscribe-container .fa-youtube {
+                color: #FF0000; /* YouTube's brand color */
+                font-size: 24px; /* Icon size, adjust as needed */
+            }
+        </style>
+
+        <div id="video-container" class="video-container">
+            <!-- Subscription Button and Videos will be dynamically inserted here -->
+        </div>
+
+        <` + `script src="https://apis.google.com/js/platform.js">` + `</` + `script>
+        <` + `script>
+            const apiKey = '${apiKey}';
+            const channelID = '${channelId}';
+            const maxResults = ${maxResults};
+
+            const apiURL = \`https://www.googleapis.com/youtube/v3/search?key=\${apiKey}&channelId=\${channelID}&part=snippet,id&order=date&maxResults=\${maxResults}\`;
+
+            fetch(apiURL)
+                .then(response => response.json())
+                .then(data => {
+                    const videosHTML = document.createElement('div');
+                    videosHTML.className = 'videos';
+
+                    data.items.forEach(video => {
+                        if(video.id.kind === "youtube#video") {
+                            const videoId = video.id.videoId;
+                            const videoTitle = video.snippet.title;
+                            const videoDescription = video.snippet.description.substring(0, 100) + "...";
+                            const videoFrame = \`<iframe src="https://www.youtube.com/embed/\${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>\`;
+                            videosHTML.innerHTML += \`
+                                <div class="video mdc-elevation--z3">
+                                    \${videoFrame}
+                                    <div class="video-info">
+                                        <h3 class="video-title">\${videoTitle}</h3>
+                                        <p class="video-description">\${videoDescription}</p>
+                                    </div>
+                                </div>\`;
+                        }
+                    });
+
+                    document.getElementById('video-container').appendChild(videosHTML);
+                    addSubscriptionButton(); // Call to add the subscription button
+                })
+                .catch(error => console.log('Error fetching data:', error));
+
+            function addSubscriptionButton() {
+                const subscribeHTML = \`
+                    <div class="subscribe-container">
+                        <i class="fa-brands fa-youtube"></i> <!-- Font Awesome YouTube icon -->
+                        <div class="g-ytsubscribe" data-channelid="\${channelID}" data-layout="default" data-count="default"></div>
+                    </div>\`;
+                document.getElementById('video-container').insertAdjacentHTML('afterbegin', subscribeHTML);
+                gapi.ytsubscribe.go(); // This line triggers the rendering of the subscribe button
+            }
+        ` + `</` + `script>
+    `;
+}
+
+
+
+
+
+
+
+function showModal() {
+    document.getElementById('codeModal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('codeModal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function copyCode() {
+    const copyText = document.getElementById('generatedCode');
+    copyText.select();
+    document.execCommand('copy');
+    alert("Code copied to clipboard!");
+}
+
+
+
+</script>
+
+</body>
+</html>
